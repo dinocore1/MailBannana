@@ -106,6 +106,7 @@ public class SMTPConnection {
         while(true) {
             line = mReader.readLine();
             if(".".equalsIgnoreCase(line)) {
+                send("250 Ok: message has been queued");
                 return;
             }
         }
