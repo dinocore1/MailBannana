@@ -7,9 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
+import java.net.*;
 import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,6 +21,12 @@ public class SMTPServer {
 
         private int mPort = 25;
         private int mMaxConnections = 10;
+        private String mHostname;
+
+        public Builder hostname(String hostname) {
+            mHostname = hostname;
+            return this;
+        }
 
         public Builder port(int port) {
             Preconditions.checkArgument(port > 0);
@@ -38,6 +42,19 @@ public class SMTPServer {
 
         public SMTPServer create() {
             SMTPServer retval = new SMTPServer();
+
+            if(mHostname == null) {
+                try {
+                    retval.mHostName = InetAddress.getLocalHost().getHostName();
+                } catch (UnknownHostException e) {
+                    LOGGER.error("", e);
+                    Throwables.propagate(e);
+                }
+            } else {
+                retval.mHostName = mHostname;
+            }
+
+
             retval.mPort = mPort;
             retval.mMaxNumConnections = mMaxConnections;
 
@@ -48,6 +65,7 @@ public class SMTPServer {
 
     private boolean mRunning = false;
     private int mPort;
+    private String mHostName;
     private ServerSocket mServerSocket;
     private Thread mSocketThread;
     private final HashSet<SMTPConnection> mConnections = new HashSet<SMTPConnection>();
@@ -141,6 +159,10 @@ public class SMTPServer {
             mConnections.notifyAll();
         }
 
+    }
+
+    public String getHostName() {
+        return mHostName;
     }
 
 }

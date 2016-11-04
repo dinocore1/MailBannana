@@ -8,13 +8,33 @@ public class Main {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
+    public static final class Config {
+        Integer SMTP_port;
+        String hostname;
+    }
+
     private static boolean mRunning;
     private static SMTPServer mSMPTServer;
 
+    private static SMTPServer buildServer(Config config) {
+        SMTPServer.Builder smtpBuilder = new SMTPServer.Builder();
+        if(config.SMTP_port != null) {
+            smtpBuilder.port(config.SMTP_port);
+        }
+
+        if(config.hostname != null) {
+            smtpBuilder.hostname(config.hostname);
+        }
+
+        return smtpBuilder.create();
+    }
+
     public static void main(String[] args) {
-        mSMPTServer = new SMTPServer.Builder()
-                .port(9005)
-                .create();
+
+        Config config = new Config();
+        config.SMTP_port = 9005;
+
+        mSMPTServer = buildServer(config);
 
         try {
             mSMPTServer.start();
