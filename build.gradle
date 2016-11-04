@@ -1,0 +1,17 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+allprojects {
+
+    group = 'com.dev-smart'
+    version = '0.0.1-SNAPSHOT'
+    description = 'Simple EMail Server'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
